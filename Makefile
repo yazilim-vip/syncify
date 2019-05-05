@@ -16,7 +16,7 @@ buildbase:
 # Build Application Docker Image
 buildapp:
 	@echo Start Building App Base Image\n
-	docker build -f Dockerfile.app -t maemresen/syncify:$(TAG) .
+	docker build -f Dockerfile.app -t yazilimvip/syncify-nodejs:$(TAG) .
 
 
 ################################
@@ -24,7 +24,7 @@ buildapp:
 ################################
 # To run app temprarily
 run: buildapp
-	docker run -p 3000:3000 -it --rm maemresen/syncify:$(TAG)
+	docker run -p 3000:3000 -it --rm yazilimvip/syncify-nodejs:$(TAG)
 
 # To build and run app temprarily
 brun: buildbase run
