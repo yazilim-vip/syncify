@@ -1,4 +1,3 @@
-
 // Express web server framework
 var express = require('express');
 var cors = require('cors');
@@ -103,13 +102,28 @@ app.get('/callback', function (req, res) {
 
                 var options = {
                     url: 'https://api.spotify.com/v1/me/player/currently-playing',
-                    headers: { 'Authorization': 'Bearer ' + access_token },
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',              
+                        'Authorization': 'Bearer ' + access_token
+                    },
                     json: true
                 };
 
                 // use the access token to access the Spotify Web API
-                request.get(options, function (error, response, body) {
-                    console.log(body);
+                request.get(options, function (err, resp, result) {
+                    //console.log(body);
+
+                    console.log("Mustafa is Listening : ", (result.item.duration_ms / 1000 / 60), result.item.artists[0].name, result.item.name)
+
+                    var songId = result.item.uri;
+                    var progressMs = result.progress_ms;
+                    var isPlaying = result.is_playing;
+                    if (!isPlaying) {
+                        return;
+                    }
+                    console.log('Read songId=', songId);
+
                 });
 
                 // we can also pass the token to the browser to make requests from there
@@ -134,7 +148,9 @@ app.get('/refresh_token', function (req, res) {
     var refresh_token = req.query.refresh_token;
     var authOptions = {
         url: 'https://accounts.spotify.com/api/token',
-        headers: { 'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64')) },
+        headers: {
+            'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
+        },
         form: {
             grant_type: 'refresh_token',
             refresh_token: refresh_token
@@ -155,4 +171,3 @@ app.get('/refresh_token', function (req, res) {
 
 app.listen(PORT, HOST);
 console.log(`Running on http://${HOST}:${PORT}`);
-
