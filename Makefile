@@ -16,7 +16,7 @@ buildbase:
 # Build Application Docker Image
 buildapp:
 	@echo Start Building App Base Image\n
-	docker build -f Dockerfile -t maemresen/syncify:$(TAG) .
+	docker build -f Dockerfile.app -t maemresen/syncify:$(TAG) .
 
 
 ################################
