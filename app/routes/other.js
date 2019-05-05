@@ -5,6 +5,10 @@ var cookieParser = require('cookie-parser');
 // "Request" library
 var request = require('request');
 
+
+var mqtt = require('./mqtt');
+
+
 router.get('/home', function (req, res) {
 
     var options = {
