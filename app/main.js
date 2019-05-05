@@ -97,34 +97,11 @@ app.get('/callback', function (req, res) {
         request.post(authOptions, function (error, response, body) {
             if (!error && response.statusCode === 200) {
 
-                var access_token = body.access_token,
-                    refresh_token = body.refresh_token
+                var access_token = body.access_token;
+                var refresh_token = body.refresh_token;
 
-                var options = {
-                    url: 'https://api.spotify.com/v1/me/player/currently-playing',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',              
-                        'Authorization': 'Bearer ' + access_token
-                    },
-                    json: true
-                };
+                res.cookie("access_token", access_token);
 
-                // use the access token to access the Spotify Web API
-                request.get(options, function (err, resp, result) {
-                    //console.log(body);
-
-                    console.log("Mustafa is Listening : ", (result.item.duration_ms / 1000 / 60), result.item.artists[0].name, result.item.name)
-
-                    var songId = result.item.uri;
-                    var progressMs = result.progress_ms;
-                    var isPlaying = result.is_playing;
-                    if (!isPlaying) {
-                        return;
-                    }
-                    console.log('Read songId=', songId);
-
-                });
 
                 // we can also pass the token to the browser to make requests from there
                 res.redirect('/#' +
@@ -168,6 +145,37 @@ app.get('/refresh_token', function (req, res) {
     });
 });
 
+
+app.get('/home', function (req, res) {
+
+    var options = {
+        url: 'https://api.spotify.com/v1/me/player/currently-playing',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + req.cookies.access_token
+        },
+        json: true
+    };
+
+    // use the access token to access the Spotify Web API
+    request.get(options, function (err, resp, result) {
+
+        console.log("Mustafa is Listening : ", (result.item.duration_ms / 1000 / 60), result.item.artists[0].name, result.item.name)
+
+        var songId = result.item.uri;
+        var progressMs = result.progress_ms;
+        var isPlaying = result.is_playing;
+        if (!isPlaying) {
+            return;
+        }
+        console.log('Read songId=', songId);
+
+        // publish songId
+
+    });
+
+});
 
 app.listen(PORT, HOST);
 console.log(`Running on http://${HOST}:${PORT}`);
