@@ -17,6 +17,12 @@ var client_id = process.env.CLIENT_ID; // Client id
 var client_secret = process.env.CLIENT_SECRET; // Secret
 var redirect_uri = process.env.REDIRECT_URI; //Redirect URI
 
+
+// Constants
+const PORT = 3000;
+const HOST = '0.0.0.0';
+
+
 //----------- Helper Functions -----------//
 /**
  * Generates a random string containing numbers and letters
@@ -146,5 +152,7 @@ app.get('/refresh_token', function (req, res) {
     });
 });
 
-console.log('Listening on 3000');
-app.listen(3000);
+
+app.listen(PORT, HOST);
+console.log(`Running on http://${HOST}:${PORT}`);
+
