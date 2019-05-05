@@ -1,7 +1,19 @@
 var express = require('express');
+var querystring = require('querystring');
+var cookieParser = require('cookie-parser');
 
-// "Request" library
+// To Load Properties from Environment
+var dotenv = require('dotenv');
+
+// To make HTTP request
 var request = require('request');
+
+// Other
+var util = require('../util')
+
+
+//----------- Environment -----------//
+dotenv.config() // Configure Environment Variables
 
 var router = express.Router();
 
@@ -9,9 +21,11 @@ var client_id = process.env.CLIENT_ID; // Client id
 var client_secret = process.env.CLIENT_SECRET; // Secret
 var redirect_uri = process.env.REDIRECT_URI; //Redirect URI
 
+
 // ExpressJS Routes
 router.get('/login', function (req, res) {
-    var state = generateRandomString(16);
+    var stateKey = 'spotify_auth_state'; // authenticated to spotify or not
+    var state = util.generateRandomString(16);
     res.cookie(stateKey, state);
 
     // application requests authorization
@@ -106,7 +120,5 @@ router.get('/refresh_token', function (req, res) {
         }
     });
 });
-
-
 
 module.exports = router;

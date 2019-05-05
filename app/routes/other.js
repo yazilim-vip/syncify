@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var cookieParser = require('cookie-parser');
 
 // "Request" library
 var request = require('request');
