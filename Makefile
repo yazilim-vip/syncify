@@ -29,3 +29,19 @@ run: buildapp
 # To build and run app temprarily
 brun: buildbase run
 
+
+################################
+# Push
+################################
+pushbase:
+	docker push yazilimvip/syncify-base:$(TAG)
+
+pushapp:
+	docker push yazilimvip/syncify-nodejs:$(TAG)
+
+bpushbase: buildbase
+	docker push yazilimvip/syncify-base:$(TAG)
+
+bpushapp: buildapp
+	docker push yazilimvip/syncify-nodejs:$(TAG)
+
