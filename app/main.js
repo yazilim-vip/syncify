@@ -3,6 +3,7 @@ var express = require('express');
 var cors = require('cors');
 var cookieParser = require('cookie-parser');
 
+var mqtt = require('./helper/mqtt');
 
 //----------- ExpresJS Configuration -----------//
 // Constants
@@ -26,5 +27,7 @@ app.listen(PORT, HOST);
 mqtt.subscribe(function (songId) {
     console.log("My song ID : " + songId);
 });
+
+
 
 console.log(`Running on http://${HOST}:${PORT}`);

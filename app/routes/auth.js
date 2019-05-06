@@ -9,8 +9,10 @@ var dotenv = require('dotenv');
 var request = require('request');
 
 // Other
-var util = require('../util')
+var util = require('../helper/util')
 
+// Other
+var spotify = require('../helper/spotify')
 
 //----------- Environment -----------//
 dotenv.config() // Configure Environment Variables
@@ -21,10 +23,10 @@ var client_id = process.env.CLIENT_ID; // Client id
 var client_secret = process.env.CLIENT_SECRET; // Secret
 var redirect_uri = process.env.REDIRECT_URI; //Redirect URI
 
+var stateKey = 'spotify_auth_state'; // authenticated to spotify or not
 
 // ExpressJS Routes
 router.get('/login', function (req, res) {
-    var stateKey = 'spotify_auth_state'; // authenticated to spotify or not
     var state = util.generateRandomString(16);
     res.cookie(stateKey, state);
 
@@ -76,8 +78,8 @@ router.get('/callback', function (req, res) {
                 var access_token = body.access_token;
                 var refresh_token = body.refresh_token;
 
-                res.cookie("access_token", access_token);
-
+                //res.cookie("access_token", access_token);
+                spotify.init(access_token, refresh_token);
 
                 // we can also pass the token to the browser to make requests from there
                 res.redirect('/#' +
