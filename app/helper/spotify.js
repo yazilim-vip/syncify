@@ -32,4 +32,12 @@ Spotify.prototype.apiCall = (api, callback) => {
     });
 }
 
+Spotify.prototype.getAccessToken = () => {
+    return access_token;
+}
+
+Spotify.prototype.getRefreshToken = () => {
+    return refresh_token;
+}
+
 module.exports = new Spotify();

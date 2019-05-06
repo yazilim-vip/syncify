@@ -2,27 +2,37 @@ var Api = function () {};
 
 var Spotify = require('./helper/spotify');
 
-Api.prototype.getCurrentSong = () => {
-    Spotify.apiCall(
-        // API URL
-        'https://api.spotify.com/v1/me/player/currently-playing'
-
-        // Callback
-        , (result) => {
-            console.log("Mustafa is Listening : ", (result.item.duration_ms / 1000 / 60), result.item.artists[0].name, result.item.name)
-            var songId = result.item.uri;
-            var progressMs = result.progress_ms;
-            var isPlaying = result.is_playing;
-            if (!isPlaying) {
-                return;
-            }
-            console.log('Currently playing songId=', songId);
-            mqtt.publish(songId);
-        });
+Api.prototype.getCurrentSong = (callback) => {
+    Spotify.apiCall('https://api.spotify.com/v1/me/player/currently-playing', callback);
 }
 
 Api.prototype.getUserDetails = (callback) => {
     Spotify.apiCall('https://api.spotify.com/v1/me', callback);
 }
+
+Api.prototype.playSong = (song_id, position_ms) => {
+
+    request({
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + Spotify.getAccessToken()
+        },
+        body: JSON.stringify({
+            "uris": [
+                song_id
+            ],
+            "offset": {
+                "position": 0
+            },
+            "position_ms": position_ms,
+        }),
+        uri: 'https://api.spotify.com/v1/me/player/play',
+        method: 'PUT'
+    }, function (err, res, body) {});
+
+}
+
+
 
 module.exports = new Api();
