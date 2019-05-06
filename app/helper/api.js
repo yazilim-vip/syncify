@@ -2,7 +2,7 @@ var Api = function () {};
 
 var request = require('request');
 
-var Spotify = require('./helper/spotify');
+var Spotify = require('./spotify');
 
 
 
