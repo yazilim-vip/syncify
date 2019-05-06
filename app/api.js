@@ -1,6 +1,10 @@
 var Api = function () {};
 
+var request = require('request');
+
 var Spotify = require('./helper/spotify');
+
+
 
 Api.prototype.getCurrentSong = (callback) => {
     Spotify.apiCall('https://api.spotify.com/v1/me/player/currently-playing', callback);

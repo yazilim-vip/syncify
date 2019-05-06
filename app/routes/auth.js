@@ -31,7 +31,7 @@ router.get('/login', function (req, res) {
     res.cookie(stateKey, state);
 
     // application requests authorization
-    var scope = 'user-read-currently-playing';
+    var scope = 'user-read-currently-playing user-modify-playback-state';
     res.redirect('https://accounts.spotify.com/authorize?' +
         querystring.stringify({
             response_type: 'code',
