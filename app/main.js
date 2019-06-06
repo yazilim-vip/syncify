@@ -3,6 +3,9 @@ var express = require('express');
 var cors = require('cors');
 var cookieParser = require('cookie-parser');
 
+var figlet = require('./helper/figlet');
+figlet.print('Syncify');
+
 //----------- ExpresJS Configuration -----------//
 // Constants
 const PORT = 3000;
@@ -23,7 +26,6 @@ app.listen(PORT, HOST);
 
 // Other
 var mqtt = require('./helper/mqtt');
-
 
 mqtt.subscribe(function (received_song_id) {
 

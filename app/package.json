@@ -14,7 +14,8 @@
     "mqtt": "^2.18.8",
     "querystring": "^0.2.0",
     "request": "^2.88.0",
-    "pretty-ms": "^5.0.0"
+    "pretty-ms": "^5.0.0",
+    "figlet": "1.2.3"
   },
   "engines": {
     "node": "8.x"
