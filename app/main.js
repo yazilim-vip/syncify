@@ -27,24 +27,20 @@ app.listen(PORT, HOST);
 // Other
 var mqtt = require('./helper/mqtt');
 
-const TIMEOUT = 500  // 0.5 second
+const TIMEOUT = 200;  // 0.5 second
 var old_song_id = -1;
 
 setInterval(function () {
     var api = require('./helper/api');
     api.getCurrentSong((current_song_details) => {
+        if (current_song_details === undefined || "error" in current_song_details) {
+            return;
+        }
         
-        if("error" in current_song_details){
-            console.log(current_song_details)
-        }else{
-            //console.log("Current Song Details: ",current_song_details);
-            // Logging Song Id
+        if (current_song_details.is_playing && old_song_id !== current_song_id) {
             var current_song_id = current_song_details.item.uri;
-            if (current_song_details.is_playing && old_song_id !== current_song_id) {
-                //console.log("Publishing:", current_song_id);
-                mqtt.publish(current_song_id);
-                old_song_id = current_song_id;
-            }
+            mqtt.publish(current_song_id);
+            old_song_id = current_song_id;
         }
     });
 }, TIMEOUT);
@@ -53,10 +49,13 @@ mqtt.subscribe(function (received_song_id) {
     var api = require('./helper/api');
     var prettyMs = require('pretty-ms');
     api.getUserDetails((user_details) => {
- 
-        console.log("\nReceived Song ID: ", received_song_id.toString());
+
+        
 
         api.getCurrentSong((current_song_details) => {
+            if (current_song_details === undefined || "error" in current_song_details) {
+                return;
+            }
 
             // Logging Song Details
             var current_song_id = current_song_details.item.uri;
@@ -65,16 +64,17 @@ mqtt.subscribe(function (received_song_id) {
             var song_artist = current_song_details.item.artists[0].name;
             var song_name = current_song_details.item.name;
 
-            console.log("\n- Currently Playing Song Details ---------------")
-            console.log("User Name\t:", user_details.display_name);
-            console.log("Song ID  \t:", current_song_id);
-            console.log("Song Artist\t:", song_artist)
-            console.log("Song Name\t:", song_name);
-            console.log("Progress \t:", prettyMs(current_song_proggress_ms));
-            console.log("Song Duration\t:", prettyMs(song_duration))
+            if (current_song_details.is_playing && received_song_id.toString() !== current_song_id) {
 
-            if (current_song_details.is_playing && received_song_id !== current_song_id) {
-                console.log("Playing Song[" + received_song_id + "]")
+                console.log("\nReceived Song ID: ", received_song_id.toString());
+
+                console.log("\n- Currently Playing Song Details ---------------")
+                console.log("User Name\t:", user_details.display_name);
+                console.log("Song ID  \t:", current_song_id);
+                console.log("Song Artist\t:", song_artist)
+                console.log("Song Name\t:", song_name);
+                console.log("Progress \t:", prettyMs(current_song_proggress_ms));
+                console.log("Song Duration\t:", prettyMs(song_duration))
                 api.playSong(received_song_id.toString(), 0);
             }
         });
