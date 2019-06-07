@@ -36,9 +36,9 @@ setInterval(function () {
         if (current_song_details === undefined || "error" in current_song_details) {
             return;
         }
-        
-        if (current_song_details.is_playing && old_song_id !== current_song_id) {
-            var current_song_id = current_song_details.item.uri;
+
+        var current_song_id = current_song_details.item.uri;
+        if (current_song_details.is_playing && old_song_id.toString() !== current_song_id.toString()) {
             mqtt.publish(current_song_id);
             old_song_id = current_song_id;
         }
@@ -49,9 +49,7 @@ mqtt.subscribe(function (received_song_id) {
     var api = require('./helper/api');
     var prettyMs = require('pretty-ms');
     api.getUserDetails((user_details) => {
-
         
-
         api.getCurrentSong((current_song_details) => {
             if (current_song_details === undefined || "error" in current_song_details) {
                 return;
@@ -64,18 +62,16 @@ mqtt.subscribe(function (received_song_id) {
             var song_artist = current_song_details.item.artists[0].name;
             var song_name = current_song_details.item.name;
 
-            if (current_song_details.is_playing && received_song_id.toString() !== current_song_id) {
-
+            if (current_song_details.is_playing && received_song_id.toString() !== current_song_id.toString()) {
                 console.log("\nReceived Song ID: ", received_song_id.toString());
-
-                console.log("\n- Currently Playing Song Details ---------------")
+                api.playSong(received_song_id.toString(), 0);
+                console.log("- Previous Playing Song Details ---------------")
                 console.log("User Name\t:", user_details.display_name);
                 console.log("Song ID  \t:", current_song_id);
                 console.log("Song Artist\t:", song_artist)
                 console.log("Song Name\t:", song_name);
                 console.log("Progress \t:", prettyMs(current_song_proggress_ms));
-                console.log("Song Duration\t:", prettyMs(song_duration))
-                api.playSong(received_song_id.toString(), 0);
+                console.log("Song Duration\t:", prettyMs(song_duration), "\n")
             }
         });
     });
