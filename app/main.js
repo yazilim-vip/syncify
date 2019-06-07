@@ -27,12 +27,33 @@ app.listen(PORT, HOST);
 // Other
 var mqtt = require('./helper/mqtt');
 
-mqtt.subscribe(function (received_song_id) {
+const TIMEOUT = 500  // 0.5 second
+var old_song_id = -1;
 
+setInterval(function () {
+    var api = require('./helper/api');
+    api.getCurrentSong((current_song_details) => {
+        
+        if("error" in current_song_details){
+            console.log(current_song_details)
+        }else{
+            //console.log("Current Song Details: ",current_song_details);
+            // Logging Song Id
+            var current_song_id = current_song_details.item.uri;
+            if (current_song_details.is_playing && old_song_id !== current_song_id) {
+                //console.log("Publishing:", current_song_id);
+                mqtt.publish(current_song_id);
+                old_song_id = current_song_id;
+            }
+        }
+    });
+}, TIMEOUT);
+
+mqtt.subscribe(function (received_song_id) {
     var api = require('./helper/api');
     var prettyMs = require('pretty-ms');
     api.getUserDetails((user_details) => {
-
+ 
         console.log("\nReceived Song ID: ", received_song_id.toString());
 
         api.getCurrentSong((current_song_details) => {
@@ -53,11 +74,11 @@ mqtt.subscribe(function (received_song_id) {
             console.log("Song Duration\t:", prettyMs(song_duration))
 
             if (current_song_details.is_playing && received_song_id !== current_song_id) {
+                console.log("Playing Song[" + received_song_id + "]")
                 api.playSong(received_song_id.toString(), 0);
             }
         });
     });
-
 });
 
 console.log(`Running on http://${HOST}:${PORT}`);
