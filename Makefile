@@ -4,7 +4,7 @@ ifndef VERSION
 override VERSION = latest
 endif
 
-fndef REGISTRY
+ifndef REGISTRY
 override REGISTRY = yazilimvip
 endif
 
