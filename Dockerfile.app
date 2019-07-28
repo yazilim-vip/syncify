@@ -1,4 +1,4 @@
-FROM yazilimvip/syncify-base:latest
+FROM yazilimvip/p2g-console-base:latest
 
 # Create app directory
 WORKDIR /usr/src/syncify
