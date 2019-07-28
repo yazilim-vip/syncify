@@ -24,7 +24,7 @@ buildbase:
 # Build Application Docker Image
 buildapp:
 	@echo Start Building App Base Image\n
-	docker build -f Dockerfile.app -t yazilimvip/$(APPNAME)-nodejs:$(VERSION) .
+	docker build -f Dockerfile.app -t $(REGISTRY)/$(APPNAME)-nodejs:$(VERSION) .
 
 
 ################################
@@ -32,7 +32,7 @@ buildapp:
 ################################
 # To run app temprarily
 run: buildapp
-	docker run -p 3000:3000 -it --rm yazilimvip/$(APPNAME)-nodejs:$(VERSION)
+	docker run -p 3000:3000 -it --rm $(REGISTRY)/$(APPNAME)-nodejs:$(VERSION)
 
 # To build and run app temprarily
 brun: buildbase run
@@ -41,6 +41,7 @@ brun: buildbase run
 ################################
 # Push
 ################################
+
 pushbase:
 	docker push $(REGISTRY)/$(APPNAME)-base:$(VERSION)
 
@@ -50,4 +51,3 @@ pushapp:
 bpushbase: buildbase pushbase
 
 bpushapp: buildapp pushapp
-
